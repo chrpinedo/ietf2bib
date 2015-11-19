@@ -43,6 +43,9 @@ def parse_rfc_entry(node):
                 if subsubnode.nodeType == subnode.ELEMENT_NODE and \
                    subsubnode.tagName == "page-count":
                     rfc_entry['pages'] = subsubnode.firstChild.nodeValue
+        elif subnode.nodeType == subnode.ELEMENT_NODE and \
+             subnode.tagName == "doi":
+            rfc_entry['doi'] = subnode.firstChild.nodeValue
     return rfc_entry
 
 def print_rfc_entry(rfc_entry):
@@ -51,29 +54,33 @@ def print_rfc_entry(rfc_entry):
     elif args.draft:
         print """\
 @techreport{{rfc{0},
-AUTHOR = "{2}",
-TITLE = "{{{1}}}",
-HOWPUBLISHED = {{Internet Requests for Comments}},
-TYPE = "{{RFC}}",
-NUMBER = {0},
-PAGES = {{1-{5}}},
-YEAR = {3},
-MONTH = "{4}",
-PUBLISHER = "{{RFC Editor}}",
-INSTITUTION = "{{RFC Editor}}",
-URL = {{http://www.rfc-editor.org/rfc/rfc{0}.txt}}
+AUTHOR          = {{{2}}},
+TITLE           = {{{{{1}}}}},
+HOWPUBLISHED    = {{Internet Requests for Comments}},
+TYPE            = {{{{RFC}}}},
+NUMBER          = {0},
+PAGES           = {{1-{5}}},
+YEAR            = {3},
+MONTH           = {{{4}}},
+PUBLISHER       = {{{{RFC Editor}}}},
+INSTITUTION     = {{{{RFC Editor}}}},
+URL             = {{http://www.rfc-editor.org/rfc/rfc{0}.txt}},
+DOI             = {{{6}}},
 }}""".format(rfc_entry['num'], rfc_entry['title'], rfc_entry['authors'],
-             rfc_entry['year'], rfc_entry['month'], rfc_entry['pages'])
+             rfc_entry['year'], rfc_entry['month'], rfc_entry['pages'],
+             rfc_entry['doi'])
         return
     print """\
 @misc{{rfc{0},
-TITLE        = "{{{1}}}",
-AUTHOR       = "{2}",
-HOWPUBLISHED = "{{RFC {0}}}",
-YEAR         = {3},
-MONTH        = "{4}",
+TITLE           = {{{{{1}}}}},
+AUTHOR          = {{{2}}},
+HOWPUBLISHED    = {{{{RFC}} {0}}},
+YEAR            = {3},
+MONTH           = {{{4}}},
+DOI             = {{{5}}},
+URL             = {{http://www.rfc-editor.org/info/rfc{0}}},
 }}""".format(rfc_entry['num'], rfc_entry['title'], rfc_entry['authors'],
-             rfc_entry['year'], rfc_entry['month'])
+             rfc_entry['year'], rfc_entry['month'], rfc_entry['doi'])
 
 # 1. Parse arguments of the CLI
 parser = argparse.ArgumentParser(description="parse the RFC xml file "
